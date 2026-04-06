@@ -11,6 +11,15 @@ function run() {
   assert.strictEqual(pending1.length, 1, 'Debe existir 1 tarea pendiente');
   assert.strictEqual(pending1[0].description, 'comprar leche');
 
+  // Prueba 1.5: validación - no permitir descripciones vacías
+  let threw = false;
+  try {
+    tasks.addTask('   ');
+  } catch (err) {
+    threw = true;
+  }
+  assert.strictEqual(threw, true, 'Debe lanzar error al agregar tarea vacía');
+
   // Prueba 2: marcar completada
   const marked = tasks.markCompleted(t1.id);
   assert.strictEqual(marked.completed, true, 'La tarea debe quedar como completada');
