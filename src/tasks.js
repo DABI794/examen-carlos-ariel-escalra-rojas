@@ -1,7 +1,12 @@
 "use strict";
 
-const tasks = [];
-let nextId = 1;
+// Módulo de gestión de tareas (ligero, en memoria). Refactor: nombres privados y helpers.
+const _tasks = [];
+let _nextId = 1;
+
+function _now() {
+  return new Date().toISOString();
+}
 
 function _validateDescription(desc) {
   if (!desc || typeof desc !== 'string' || desc.trim() === '') {
@@ -11,36 +16,36 @@ function _validateDescription(desc) {
 
 function _createTaskObject(description) {
   return {
-    id: nextId++,
+    id: _nextId++,
     description: description.trim(),
     completed: false,
-    createdAt: new Date().toISOString()
+    createdAt: _now()
   };
 }
 
 function addTask(description) {
   _validateDescription(description);
   const task = _createTaskObject(description);
-  tasks.push(task);
+  _tasks.push(task);
   return task;
 }
 
 function listPending() {
-  return tasks.filter(t => !t.completed);
+  return _tasks.filter(t => !t.completed);
 }
 
 function markCompleted(id) {
-  const t = tasks.find(x => x.id === id);
+  const t = _tasks.find(x => x.id === id);
   if (!t) throw new Error('Tarea no encontrada');
   t.completed = true;
-  t.completedAt = new Date().toISOString();
+  t.completedAt = _now();
   return t;
 }
 
-// Helpers para pruebas/estado (no expuesto al usuario final en una app real)
+// Helpers para pruebas/estado (internos)
 function _clearAllForTests() {
-  tasks.length = 0;
-  nextId = 1;
+  _tasks.length = 0;
+  _nextId = 1;
 }
 
 module.exports = {
