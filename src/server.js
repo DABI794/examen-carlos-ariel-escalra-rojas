@@ -18,15 +18,27 @@ app.use('/', express.static(path.join(__dirname, '..', 'public')));
 app.post('/api/tasks', async (req, res) => {
   try {
     const { description } = req.body;
-    const t = tasks.addTask(description);
-    // Intentar guardar en Mongo (si posible)
+    // validar
+    tasks.validateDescription(description);
+
+    // Crear objeto de tarea con id generado (timestamp) para persistencia
+    const id = Date.now();
+    const createdAt = new Date().toISOString();
+    const taskObj = { id, description: description.trim(), completed: false, createdAt };
+
+    // Intentar guardar en Mongo primero
+    let saved = null;
     try {
       await mongo.connect(config.uri, config.dbName);
-      await mongo.saveTask(t);
-    } catch (_) {
-      // no crítico: sigue funcionando en memoria
+      saved = await mongo.saveTask(taskObj);
+    } catch (err) {
+      // si falla, saved queda null y usaremos fallback en memoria
+      saved = null;
     }
-    res.status(201).json(t);
+
+    // Guardar en memoria con el mismo id/createdAt para consistencia
+    const t = tasks.addTask(description, { id, createdAt });
+    res.status(201).json(saved || t);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -34,7 +46,7 @@ app.post('/api/tasks', async (req, res) => {
 
 app.get('/api/tasks/pending', async (req, res) => {
   try {
-    // Preferir Mongo si está conectado
+    
     try {
       await mongo.connect(config.uri, config.dbName);
       const pending = await mongo.findPending();

@@ -14,20 +14,34 @@ function _validateDescription(desc) {
   }
 }
 
-function _createTaskObject(description) {
+function _createTaskObject(description, opts) {
+  const createdAt = (opts && opts.createdAt) ? opts.createdAt : _now();
+  let id;
+  if (opts && typeof opts.id !== 'undefined') {
+    id = opts.id;
+    // Ensure nextId stays ahead to avoid duplicates
+    if (id >= _nextId) _nextId = id + 1;
+  } else {
+    id = _nextId++;
+  }
   return {
-    id: _nextId++,
+    id,
     description: description.trim(),
     completed: false,
-    createdAt: _now()
+    createdAt
   };
 }
 
-function addTask(description) {
+function addTask(description, opts) {
   _validateDescription(description);
-  const task = _createTaskObject(description);
+  const task = _createTaskObject(description, opts);
   _tasks.push(task);
   return task;
+}
+
+// Expose validation for external callers (server)
+function validateDescription(desc) {
+  return _validateDescription(desc);
 }
 
 function listPending() {
@@ -52,5 +66,6 @@ module.exports = {
   addTask,
   listPending,
   markCompleted,
-  _clearAllForTests
+  _clearAllForTests,
+  validateDescription
 };
