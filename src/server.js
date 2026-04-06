@@ -73,7 +73,14 @@ app.post('/api/tasks/:id/complete', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const DEFAULT_PORT = 3000;
+
+function _listen(app, port) {
+  return new Promise((resolve, reject) => {
+    const srv = app.listen(port, () => resolve(srv));
+    srv.on('error', (err) => reject(err));
+  });
+}
 
 async function start() {
   try {
@@ -85,9 +92,37 @@ async function start() {
       console.log('MongoDB not available, using in-memory store');
     }
 
-    app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
+    // Intentar escuchar en un puerto disponible empezando en DEFAULT_PORT o PORT env
+    let port = Number(process.env.PORT) || DEFAULT_PORT;
+    let server = null;
+    const maxAttempts = 11; // try ports port .. port+10
+    for (let i = 0; i < maxAttempts; i++) {
+      try {
+        server = await _listen(app, port);
+        console.log(`Server running on http://localhost:${port}`);
+        break;
+      } catch (err) {
+        if (err && err.code === 'EADDRINUSE') {
+          console.warn(`Port ${port} in use, trying ${port + 1}...`);
+          port++;
+          continue;
+        }
+        throw err;
+      }
+    }
+
+    if (!server) {
+      console.error('No available port found to start the server');
+      process.exit(1);
+    }
+
+    // Graceful shutdown handlers
+    process.on('SIGINT', async () => {
+      console.log('Shutting down...');
+      try { await mongo.close(); } catch (e) {}
+      server.close(() => process.exit(0));
     });
+
   } catch (err) {
     console.error('Failed to start server:', err);
     process.exit(1);
