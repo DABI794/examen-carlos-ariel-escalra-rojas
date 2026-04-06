@@ -1,0 +1,11 @@
+{
+  "name": "examen",
+  "version": "1.0.0",
+  "description": "Proyecto de examen - estructura mínima para pruebas",
+  "main": "src/tasks.js",
+  "scripts": {
+    "test": "node tests/run-tests.js"
+  },
+  "author": "",
+  "license": "MIT"
+}
