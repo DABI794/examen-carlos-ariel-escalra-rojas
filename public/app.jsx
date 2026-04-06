@@ -43,39 +43,39 @@ function TaskApp(){
   }
 
   return (
-    <main>
-      <h1>Gestor de Tareas</h1>
-      <section id="form" style={{display:'flex', gap:8, marginBottom:12}}>
-        <input id="desc" placeholder="Descripción de la tarea" value={desc} onChange={e=>setDesc(e.target.value)} style={{flex:1, padding:8}} />
-        <button onClick={addTask}>Agregar tarea</button>
+    <main className="app-container">
+      <h1 className="app-title">Gestor de Tareas</h1>
+      <section className="top-form">
+        <input className="input" id="desc" placeholder="Descripción de la tarea" value={desc} onChange={e=>setDesc(e.target.value)} />
+        <button className="btn" onClick={addTask}>Agregar tarea</button>
       </section>
       {error && <div className="error">{error}</div>}
 
-      <section>
+      <section className="section">
         <h2>Tareas pendientes</h2>
-        <ul style={{listStyle:'none', padding:0}}>
-          {items.length===0 && <li>No hay tareas pendientes</li>}
+        <ul className="task-list">
+          {items.length===0 && <li className="empty">No hay tareas pendientes</li>}
           {items.map(t => (
-            <li key={t.id} style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee'}}>
-              <span>  {t.description}</span>
-              <span style={{display:'flex', gap:8}}>
-                <button onClick={()=>complete(t.id)}>Marcar completada</button>
-                <button onClick={async ()=>{ const newDesc = prompt('Nueva descripción', t.description); if(newDesc){ await fetch(`/api/tasks/${t.id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ description: newDesc }) }); load(); }}}>Editar</button>
-                <button onClick={async ()=>{ if(confirm('Eliminar tarea?')){ await fetch(`/api/tasks/${t.id}`, { method:'DELETE' }); load(); } }}>Eliminar</button>
+            <li key={t.id} className="task-item">
+              <span className={`task-desc ${t.completed? 'completed':''}`}>{t.description}</span>
+              <span className="task-actions">
+                <button className="small-btn positive" onClick={()=>complete(t.id)}>Marcar completada</button>
+                <button className="small-btn" onClick={async ()=>{ const newDesc = prompt('Nueva descripción', t.description); if(newDesc){ await fetch(`/api/tasks/${t.id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ description: newDesc }) }); load(); }}}>Editar</button>
+                <button className="small-btn danger" onClick={async ()=>{ if(confirm('Eliminar tarea?')){ await fetch(`/api/tasks/${t.id}`, { method:'DELETE' }); load(); } }}>Eliminar</button>
               </span>
             </li>
           ))}
         </ul>
       </section>
 
-      <section style={{marginTop:20}}>
+      <section className="section">
         <h2>Tareas completadas</h2>
-        <ul style={{listStyle:'none', padding:0}}>
-          {completed.length===0 && <li>No hay tareas completadas</li>}
+        <ul className="task-list">
+          {completed.length===0 && <li className="empty">No hay tareas completadas</li>}
           {completed.map(t => (
-            <li key={t.id} style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee'}}>
-              <span>{t.description}</span>
-              <button onClick={async ()=>{ if(confirm('Eliminar tarea?')){ await fetch(`/api/tasks/${t.id}`, { method:'DELETE' }); load(); } }}>Eliminar</button>
+            <li key={t.id} className="task-item">
+              <span className="task-desc completed">{t.description}</span>
+              <button className="small-btn" onClick={async ()=>{ if(confirm('Eliminar tarea?')){ await fetch(`/api/tasks/${t.id}`, { method:'DELETE' }); load(); } }}>Eliminar</button>
             </li>
           ))}
         </ul>

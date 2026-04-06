@@ -1,9 +1,27 @@
-body { font-family: Arial, sans-serif; padding: 20px; background:#f7f7f7 }
-main { max-width:700px; margin:0 auto; background:#fff; padding:20px; border-radius:6px }
-h1 { margin-top:0 }
-#form { display:flex; gap:8px; margin-bottom:12px }
-#desc { flex:1; padding:8px }
-button { padding:6px 10px }
-.error { color:#b00020; height:18px }
-ul { list-style:none; padding-left:0 }
-li { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #eee }
+:root{--bg:#f6f8fb;--card:#ffffff;--accent:#3b82f6;--muted:#6b7280;--danger:#b00020}
+*{box-sizing:border-box}
+body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; background:var(--bg); margin:0; padding:24px}
+main.app-container{max-width:860px;margin:0 auto;background:var(--card);padding:28px;border-radius:12px;box-shadow:0 6px 18px rgba(23,23,23,0.06)}
+h1.app-title{margin:0 0 14px;font-size:24px;color:#111827}
+.top-form{display:flex;gap:10px;margin-bottom:14px}
+.top-form .input{flex:1;padding:10px 12px;border:1px solid #e6e9ef;border-radius:8px;font-size:14px}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600}
+.btn.secondary{background:#eef2ff;color:var(--accent);border:1px solid rgba(59,130,246,0.12)}
+.error{color:var(--danger);min-height:20px;margin-bottom:8px}
+.section{margin-top:18px}
+.section h2{margin:0 0 8px;font-size:16px;color:#111827}
+.task-list{list-style:none;padding-left:0;margin:0}
+.task-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9}
+.task-desc{color:#111827}
+.task-actions{display:flex;gap:8px}
+.small-btn{padding:6px 8px;border-radius:6px;border:1px solid #e6e9ef;background:#fff;cursor:pointer}
+.small-btn.positive{background:linear-gradient(90deg,var(--accent),#60a5fa);color:#fff;border:none}
+.small-btn.danger{color:var(--danger);border-color:rgba(176,0,32,0.08)}
+.empty{color:var(--muted);padding:8px 0}
+.completed{opacity:0.7;text-decoration:line-through}
+
+@media (max-width:640px){
+	main.app-container{padding:16px}
+	.top-form{flex-direction:column}
+	.top-form .input{width:100%}
+}
