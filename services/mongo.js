@@ -1,7 +1,6 @@
 "use strict";
 
-// Adaptador MongoDB opcional: si el paquete `mongodb` no está instalado,
-// el adaptador usa un almacenamiento en memoria para no hacer fallar el servidor.
+
 const config = require('../config/db');
 
 let _hasDriver = true;

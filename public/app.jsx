@@ -50,8 +50,8 @@ function TaskApp(){
         <ul style={{listStyle:'none', padding:0}}>
           {items.length===0 && <li>No hay tareas pendientes</li>}
           {items.map(t => (
-            <li key={t.id} style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee'}}>
-              <span>{t.id} - {t.description}</span>
+            <li  style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee'}}>
+              <span>  {t.description}</span>
               <button onClick={()=>complete(t.id)}>Marcar completada</button>
             </li>
           ))}
