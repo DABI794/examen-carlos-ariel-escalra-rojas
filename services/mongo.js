@@ -56,6 +56,18 @@ async function updateTask(id, patch) {
   return res.value;
 }
 
+async function deleteTask(id) {
+  if (!_hasDriver || !_db) {
+    const idx = _store.tasks.findIndex(x => x.id === id);
+    if (idx === -1) return false;
+    _store.tasks.splice(idx, 1);
+    return true;
+  }
+  const col = _db.collection('tasks');
+  const res = await col.deleteOne({ id: id });
+  return res.deletedCount > 0;
+}
+
 async function close() {
   if (_client) await _client.close();
   _client = null;
@@ -68,5 +80,6 @@ module.exports = {
   findPending,
   updateTask,
   close,
+  deleteTask,
   _hasDriver
 };

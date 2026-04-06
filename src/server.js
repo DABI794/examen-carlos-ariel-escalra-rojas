@@ -73,6 +73,40 @@ app.post('/api/tasks/:id/complete', async (req, res) => {
   }
 });
 
+// Editar tarea
+app.put('/api/tasks/:id', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { description } = req.body;
+    // update in Mongo if possible
+    try {
+      await mongo.connect(config.uri, config.dbName);
+      await mongo.updateTask(id, { description: description.trim() });
+    } catch (_) {}
+    const updated = tasks.updateTaskLocal(id, { description });
+    if (!updated) return res.status(404).json({ error: 'Tarea no encontrada' });
+    res.json(updated);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Eliminar tarea
+app.delete('/api/tasks/:id', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    try {
+      await mongo.connect(config.uri, config.dbName);
+      const colRes = await mongo.updateTask(id, { deleted: true });
+    } catch (_) {}
+    const ok = tasks.deleteTask(id);
+    if (!ok) return res.status(404).json({ error: 'Tarea no encontrada' });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 const DEFAULT_PORT = 3000;
 
 function _listen(app, port) {

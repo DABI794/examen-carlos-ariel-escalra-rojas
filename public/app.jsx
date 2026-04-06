@@ -3,6 +3,7 @@ const { useState, useEffect } = React;
 function TaskApp(){
   const [desc, setDesc] = useState('');
   const [items, setItems] = useState([]);
+  const [completed, setCompleted] = useState([]);
   const [error, setError] = useState('');
 
   async function load(){
@@ -10,6 +11,11 @@ function TaskApp(){
       const res = await fetch('/api/tasks/pending');
       const data = await res.json();
       setItems(data);
+      try {
+        const r2 = await fetch('/api/tasks/completed');
+        const c = await r2.json();
+        setCompleted(c);
+      } catch (e) { setCompleted([]); }
     }catch(e){
       setError('No se pudo cargar tareas');
     }
@@ -38,7 +44,7 @@ function TaskApp(){
 
   return (
     <main>
-      <h1>Gestor de Tareas (React)</h1>
+      <h1>Gestor de Tareas</h1>
       <section id="form" style={{display:'flex', gap:8, marginBottom:12}}>
         <input id="desc" placeholder="Descripción de la tarea" value={desc} onChange={e=>setDesc(e.target.value)} style={{flex:1, padding:8}} />
         <button onClick={addTask}>Agregar tarea</button>
@@ -50,9 +56,26 @@ function TaskApp(){
         <ul style={{listStyle:'none', padding:0}}>
           {items.length===0 && <li>No hay tareas pendientes</li>}
           {items.map(t => (
-            <li  style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee'}}>
+            <li key={t.id} style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee'}}>
               <span>  {t.description}</span>
-              <button onClick={()=>complete(t.id)}>Marcar completada</button>
+              <span style={{display:'flex', gap:8}}>
+                <button onClick={()=>complete(t.id)}>Marcar completada</button>
+                <button onClick={async ()=>{ const newDesc = prompt('Nueva descripción', t.description); if(newDesc){ await fetch(`/api/tasks/${t.id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ description: newDesc }) }); load(); }}}>Editar</button>
+                <button onClick={async ()=>{ if(confirm('Eliminar tarea?')){ await fetch(`/api/tasks/${t.id}`, { method:'DELETE' }); load(); } }}>Eliminar</button>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section style={{marginTop:20}}>
+        <h2>Tareas completadas</h2>
+        <ul style={{listStyle:'none', padding:0}}>
+          {completed.length===0 && <li>No hay tareas completadas</li>}
+          {completed.map(t => (
+            <li key={t.id} style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee'}}>
+              <span>{t.description}</span>
+              <button onClick={async ()=>{ if(confirm('Eliminar tarea?')){ await fetch(`/api/tasks/${t.id}`, { method:'DELETE' }); load(); } }}>Eliminar</button>
             </li>
           ))}
         </ul>

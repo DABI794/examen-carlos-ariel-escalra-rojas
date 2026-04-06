@@ -56,6 +56,22 @@ function markCompleted(id) {
   return t;
 }
 
+function deleteTask(id) {
+  const idx = _tasks.findIndex(x => x.id === id);
+  if (idx === -1) return false;
+  _tasks.splice(idx, 1);
+  return true;
+}
+
+function updateTaskLocal(id, fields) {
+  const t = _tasks.find(x => x.id === id);
+  if (!t) return null;
+  if (fields.description) t.description = fields.description.trim();
+  if (typeof fields.completed !== 'undefined') t.completed = !!fields.completed;
+  if (fields.completed) t.completedAt = _now();
+  return t;
+}
+
 // Helpers para pruebas/estado (internos)
 function _clearAllForTests() {
   _tasks.length = 0;
