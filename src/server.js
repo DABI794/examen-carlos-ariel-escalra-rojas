@@ -62,6 +62,24 @@ app.post('/api/tasks/:id/complete', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+
+async function start() {
+  try {
+    // Intentar conectar a MongoDB al inicio; si falla, seguimos usando fallback en memoria
+    try {
+      await mongo.connect(config.uri, config.dbName);
+      console.log('Connected to MongoDB');
+    } catch (err) {
+      console.log('MongoDB not available, using in-memory store');
+    }
+
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error('Failed to start server:', err);
+    process.exit(1);
+  }
+}
+
+start();
