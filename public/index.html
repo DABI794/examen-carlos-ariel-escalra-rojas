@@ -3,25 +3,25 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Gestor de Tareas - Examen</title>
+    <title>Gestor de Tareas - Examen (React)</title>
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
-    <main>
-      <h1>Gestor de Tareas</h1>
+    <div id="root"></div>
 
-      <section id="form">
-        <input id="desc" placeholder="Descripción de la tarea" />
-        <button id="addBtn">Agregar tarea</button>
-        <div id="msg" class="error"></div>
-      </section>
+    <!-- React + ReactDOM (UMD) y Babel para JSX en navegador (solo desarrollo/simple) -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
-      <section>
-        <h2>Tareas pendientes</h2>
-        <ul id="pending"></ul>
-      </section>
-    </main>
-
-    <script src="/app.js"></script>
+    <script type="text/babel" data-presets="react">
+      // Carga el archivo app.jsx disponible en el servidor como texto y lo evalúa
+      (async function(){
+        const res = await fetch('/app.jsx');
+        const src = await res.text();
+        // eslint-disable-next-line no-eval
+        eval(Babel.transform(src, { presets: ['react'] }).code);
+      })();
+    </script>
   </body>
 </html>
