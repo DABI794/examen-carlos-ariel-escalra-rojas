@@ -20,3 +20,13 @@
 ---
 
 Este README se entregó como evidencia para la Actividad 2.
+
+## Configuración de base de datos (MongoDB)
+
+Datos de conexión para entorno local (server `examen`):
+
+- URI: `mongodb://localhost:27017`
+- Nombre de la base de datos: `Examen_git`
+- Servidor/etiqueta: `examen`
+
+Si quieres usar MongoDB con el adaptador creado en `services/mongo.js`, inicia MongoDB localmente y llama a `connect()` con la URI anterior.

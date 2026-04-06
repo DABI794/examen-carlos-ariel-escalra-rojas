@@ -7,5 +7,9 @@
     "test": "node tests/run-tests.js"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "mongodb": "^5.7.0"
+  }
 }
+
